@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Campus Portal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f4f6f9;
+      color: #333;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      font-size: 16px;
+    }
+    button {
+      background: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Campus Wi-Fi Access Check</h2>
+
+  <label for="url">Website URL:</label><br>
+  <input type="text" id="url" placeholder="Enter website URL"><br>
+  <button onclick="checkAccess()">Check Access</button>
+
+  <div id="result"></div>
+
+  <!-- ✅ Load external JS from static folder -->
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
