@@ -1,0 +1,5 @@
+flask
+firebase-admin
+google-cloud-language
+google-cloud-storage
+google-cloud-vision
