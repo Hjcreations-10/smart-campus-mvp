@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Digital Library</title>
+</head>
+<body>
+  <h2>📚 Digital Library</h2>
+  <ul id="books"></ul>
+
+<script>
+fetch("/library")   <!-- ✅ relative path, works when served by Flask -->
+  .then(res => res.json())
+  .then(data => {
+    const list = document.getElementById("books");
+    data.forEach(book => {
+      const li = document.createElement("li");
+      li.innerText = book.title + " - " + book.author;
+      list.appendChild(li);
+    });
+  })
+  .catch(err => {
+    console.error("Error fetching library:", err);
+  });
+</script>
+</body>
+</html>
