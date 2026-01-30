@@ -18,7 +18,12 @@ async function checkAccess() {
     const data = await response.json();
 
     if (data.status === "ALLOWED") {
-      resultBox.innerText = "✅ Access Granted: Educational site";
+      resultBox.innerHTML = `
+        ✅ Access Granted: Educational site<br>
+        <button onclick="window.open('${urlInput.startsWith('http') ? urlInput : 'https://' + urlInput}', '_blank')">
+          Open Website
+        </button>
+      `;
       resultBox.style.color = "green";
     } else if (data.status === "BLOCKED") {
       resultBox.innerText = "❌ Access Blocked: Non-educational site";
@@ -35,4 +40,3 @@ async function checkAccess() {
     resultBox.style.color = "red";
   }
 }
-
