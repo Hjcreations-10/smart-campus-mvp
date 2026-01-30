@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, render_template
 import os
+import requests
 import firebase_admin
 from firebase_admin import credentials, db
 from google.cloud import language_v1
+from bs4 import BeautifulSoup   # for extracting text
 
 app = Flask(__name__)
 
@@ -31,16 +33,33 @@ def check_url():
         if not data or "url" not in data:
             return jsonify({"error": "Missing 'url'", "status": "ERROR"}), 400
 
+        url = data["url"].strip()
+        if not url.startswith("http"):
+            url = "https://" + url   # auto prepend https
+
+        # 1️⃣ Fetch webpage content
+        try:
+            resp = requests.get(url, timeout=5)
+            soup = BeautifulSoup(resp.text, "html.parser")
+            page_text = " ".join([p.get_text() for p in soup.find_all("p")])
+        except Exception as e:
+            return jsonify({"error": f"Failed to fetch webpage: {str(e)}", "status": "ERROR"}), 500
+
+        if not page_text or len(page_text.split()) < 20:
+            return jsonify({"status": "BLOCKED", "error": "Not enough content to classify"})
+
+        # 2️⃣ Classify text using Google NLP
         document = language_v1.Document(
-            content=data["url"],
+            content=page_text,
             type_=language_v1.Document.Type.PLAIN_TEXT
         )
         client = language_v1.LanguageServiceClient()
         response = client.classify_text(request={"document": document})
 
+        # 3️⃣ Check categories
         for category in response.categories:
             if "Education" in category.name:
-                return jsonify({"status": "ALLOWED"})
+                return jsonify({"status": "ALLOWED", "url": url})
 
         return jsonify({"status": "BLOCKED"})
     except Exception as e:
